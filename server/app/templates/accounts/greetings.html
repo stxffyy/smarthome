@@ -1,0 +1,44 @@
+<!-- template accounts/greetings.html -->
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>{% trans 'Wellcome' %}</title>
+
+    <link rel="icon" href="https://i0.wp.com/robotrack-rus.ru/wp-content/uploads/2019/06/cropped-favicon.png?fit=32%2C32&amp;ssl=1" sizes="32x32">
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/css/base.css' %}">
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <main>
+        <div class="section sign-section">
+            <div class="container centered-items">
+                <div class="greetings-background">
+                    <img src="{% static 'accounts/img/smart-home.svg' %}" alt="Smart Home main Image">
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="sign-footer">
+        <div class="listing centered-items">
+            <span><a href="{% url 'home' %}">© SmartHome</a></span>
+            <span><a href="#">{% trans 'Contacts' %}</a></span>
+            <span><a href="http://robotrack-rus.ru/en/">© Robotrack</a> </span>
+        </div>
+    </footer>
+<!-- {#    <br> Hi everybody!!!#}
+{#    <a href={% url 'login' %}>#}
+{#        <span class="material-icons">login</span>#}
+{#        <p class="nav__itemlabel">Login</p>#}
+{#    </a>#}
+{##}
+{#    <a href={% url 'register' %}>#}
+{#        <span class="material-icons">person_add</span>#}
+{#        <p class="nav__itemlabel">Register</p>#}
+{#    </a>#} -->
+</body>
+</html>

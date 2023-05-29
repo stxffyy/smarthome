@@ -1,0 +1,118 @@
+<!-- template accounts/base.html -->
+{% load static %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+            {% trans 'Smart Home' %}
+        {% endblock %}
+    </title>
+
+    <link rel="icon" href="https://i0.wp.com/robotrack-rus.ru/wp-content/uploads/2019/06/cropped-favicon.png?fit=32%2C32&amp;ssl=1" sizes="32x32">
+    <link rel="stylesheet" type="text/css" href="{% static 'accounts/css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'general/css/base.css' %}">
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <style>
+        /* .lang-menu .selected-lang:before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            {% get_current_language as CURR_LANGUAGE_CODE %}
+            {% if CURR_LANGUAGE_CODE|stringformat:"s" == "ru"  %}
+            background-image: url("{% static 'accounts/img/icon-ru.png' %}");
+            {% elif CURR_LANGUAGE_CODE|stringformat:"s" == "en" %}
+            background-image: url("{% static 'accounts/img/icon-en.png' %}");
+            {% endif %}
+            background-size: contain;
+            background-repeat: no-repeat;
+        } */
+        /* .password-recovery {
+            margin-bottom: 1rem;
+        } */
+    </style>
+</head>
+<body>
+    <main>
+        <div class="section sign-section">
+            <div class="container centered-items">
+                <div class="sign-background box-background--white padding-top--64">
+                    <div class="sign-background-gridContainer">
+                        <div class="box-root flex-flex" style="grid-area: top / start / 8 / end;">
+                            <div class="box-root" style="background-image: linear-gradient(white 0%, rgb(247, 250, 252) 33%); flex-grow: 1;"></div>
+                        </div>
+                        <div class="box-root flex-flex" style="grid-area: 4 / 2 / auto / 5;">
+                            <div class="box-root box-divider--light-all-2 animationLeftRight tans3s" style="flex-grow: 1;"></div>
+                        </div>
+                        <div class="box-root flex-flex" style="grid-area: 6 / start / auto / 2;">
+                                <div class="box-root box-background--blue800" style="flex-grow: 1;"></div>
+                        </div>
+                        <div class="box-root flex-flex" style="grid-area: 7 / start / auto / 4;">
+                            <div class="box-root box-background--blue animationLeftRight" style="flex-grow: 1;"></div>
+                        </div>
+                        <div class="box-root flex-flex" style="grid-area: 8 / 4 / auto / 6;">
+                            <div class="box-root box-background--gray100 animationLeftRight tans3s" style="flex-grow: 1;"></div>
+                        </div>
+                        <div class="box-root flex-flex" style="grid-area: 2 / 15 / auto / end;">
+                            <div class="box-root box-background--cyan200 animationRightLeft tans4s" style="flex-grow: 1;"></div>
+                        </div>
+                        <div class="box-root flex-flex" style="grid-area: 3 / 14 / auto / end;">
+                            <div class="box-root box-background--blue animationRightLeft" style="flex-grow: 1;"></div>
+                        </div>
+                        <div class="box-root flex-flex" style="grid-area: 4 / 17 / auto / 20;">
+                            <div class="box-root box-background--gray100 animationRightLeft tans4s" style="flex-grow: 1;"></div>
+                        </div>
+                        <div class="box-root flex-flex" style="grid-area: 5 / 14 / auto / 17;">
+                            <div class="box-root box-divider--light-all-2 animationRightLeft tans3s" style="flex-grow: 1;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card sign-card">
+                    {% block sign-content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="sign-footer">
+        <div class="listing centered-items">
+            <span>© SmartHome</span>
+            <span><a href="#">{% trans 'Contacts' %}</a></span>
+            <span><a href="http://robotrack-rus.ru/en/">© Robotrack</a> </span>
+            <span>
+                <form id="lang" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                        <div class="lang-menu">
+                            {% get_current_language as CURR_LANGUAGE_CODE %}
+                            {% get_available_languages as LANGUAGES %}
+                            {% get_language_info_list for LANGUAGES as languages %}
+                            <input name="language" type="hidden" value="ru">
+                            {% for language in languages %}
+                                {% if language.code == CURR_LANGUAGE_CODE %}
+                                    <div class="selected-lang" onclick="showLanguages()">
+                                        {{ language.name_local }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            <ul id="languagesId" class="languages">
+                                {% for language in languages %}
+                                    <li>
+                                        <div class="{{ language.code }}" onclick="changeLanguage('{{ language.code }}')">{{ language.name_local }}</div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    <input name="submit_lang" type="submit" value="Go" hidden>
+                </form>
+            </span>
+        </div>
+    </footer>
+    <script type="text/javascript" src="{% static 'general/js/language.js' %}"></script>
+</body>
+</html>

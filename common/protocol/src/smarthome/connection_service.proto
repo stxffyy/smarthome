@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+import "connection.proto";
+import "executor.proto";
+import "sensor.proto";
+
+service ConnectionService {
+    rpc Connect(ConnectionRequest)returns(ConnectionResponce);
+
+    rpc InitializeDevices(DeviceData)returns(ResultData);
+
+    rpc ReceiveCommands(ReceiveCommandsRequest)returns(ReceiveCommandsResponse);
+
+    rpc ReceiveVirtSensorData(VirtSensorData)returns(VirtSensorResponce);
+
+    rpc SendSensorData(SensorDataRequest)returns(SensorDataResponce);
+}
+
+message ConnectionRequest {
+    User_Creds usercreds = 1;
+}
+
+message ConnectionResponce {
+    Session_key key = 1;
+}
+
+message DeviceData {
+    Session_key key = 1;
+    repeated Sensor sensor = 2;
+    repeated Executor executor = 3;
+}
+
+message ResultData {
+    Session_key key = 1;
+    string responce  = 2;
+}
+
+message ReceiveCommandsRequest{
+    Session_key key = 1;
+    repeated Executor executors = 2;
+}
+
+message ReceiveCommandsResponse{
+    Session_key key = 1;
+    repeated string command = 2;
+}
+
+message VirtSensorData {
+    Session_key key = 1;
+}
+
+message VirtSensorResponce {
+    Session_key key = 1;
+    repeated Sensor sensors = 2;
+    repeated SensorData data = 3;
+}
+
+message SensorDataRequest {
+    Session_key key = 1;
+    repeated Sensor sensor = 2;
+    repeated SensorData data = 3;
+}
+
+message SensorDataResponce {
+    Session_key key = 1;
+    string serverResponce = 2;
+}
+

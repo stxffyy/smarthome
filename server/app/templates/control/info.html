@@ -1,0 +1,82 @@
+<!-- template control/info.html -->
+{% extends 'control/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Info' %}{% endblock %}
+
+{% block control-content %}
+<h2 class="title sign-title">{% trans 'Personal data' %}</h2>
+
+    {% if user.is_authenticated %}
+        <p>{{ user }}</p>
+    {% endif %}
+
+    <form action="">
+
+            <div class="input-field">
+                <p>{% trans 'Username' %}</p>
+                <label for="{{ form.username.id_for_label }}" hidden>{% trans 'Username' %}</label>
+                <!-- <i class="fas fa-user"></i> -->
+                <input 
+                type="text" 
+                name="{{ form.username.html_name }}" 
+                required
+                id="{{ form.username.id_for_label }}" 
+                placeholder="{% trans 'Enter username' %}">
+            </div>
+
+            <div class="input-field">
+                <p>{% trans 'First name' %}</p>
+                <label for="{{ form.first_name.id_for_label }}" hidden>{% trans 'First name' %}</label>
+                <!-- <i class="fas fa-user-tag"></i> -->
+                <input 
+                type="text" 
+                name="{{ form.first_name.html_name }}" 
+                required
+                id="{{ form.first_name.id_for_label }}" 
+                placeholder="{% trans 'First name' %}">
+            </div>
+
+            <div class="input-field">
+                <p>{% trans 'Last name' %}</p>
+                <label for="{{ form.last_name.id_for_label }}" hidden>{% trans 'Last name' %}</label>
+                <!-- <i class="fas fa-user-lock"></i> -->
+                <input 
+                type="text" 
+                name="{{ form.last_name.html_name }}" 
+                required
+                id="{{ form.last_name.id_for_label }}" 
+                placeholder="{% trans 'Last name' %}">
+            </div>
+
+            <div class="input-field">
+                <p>{% trans 'Password' %}</p>
+                <label for="{{ form.password1.id_for_label }}" hidden>{% trans 'Password' %}</label>
+                <!-- <i class="fas fa-unlock"></i> -->
+                <input 
+                type="password" name="{{ form.password1.html_name }}" 
+                required
+                id="{{ form.password1.id_for_label }}" 
+                placeholder="{% trans 'Password' %}"
+                autocomplete="new-password" />
+            </div>
+
+            <div class="input-field">
+                <p>{% trans 'Confirm' %}</p>
+                <label for="{{ form.password2.id_for_label }}" hidden>{% trans 'Confirm' %}</label>
+                <!-- <i class="fas fa-unlock-keyhole"></i> -->
+                <input 
+                type="password" 
+                name="{{ form.password2.html_name }}" 
+                required
+                id="{{ form.password2.id_for_label }}"
+                placeholder="{% trans 'Confirm' %}"
+                autocomplete="new-password" />
+            </div>
+            <div>
+                <input type="submit" value="{% trans 'Save сhanges' %}"/>
+                <input type="submit" value="{% trans 'Cancel' %}"/>
+            </div>
+    </form>
+{% endblock control-content %}

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message User_Creds{
+    string username = 1;
+    string pass = 2;
+    uint32 board_id = 3;
+}
+
+message Session_key{
+    string key = 1;
+}
+//creds (username, pass)
+//key (probably string)

@@ -1,0 +1,220 @@
+<project name="Robotrack SmartHome Protocol" default="build">
+
+    <!-- region General -->
+
+    <property name="file.encoding" value="UTF-8"/>
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+    <!-- endregion General -->
+
+    <!-- region Paths -->
+
+    <property name="path.proto.specs" value="${basedir}/src/smarthome"/>
+
+    <property name="path.tools" value="${basedir}/tools"/>
+    <property name="path.protoc" value="${path.tools}/protoc"/>
+    <property name="path.protoc.bin" value="${path.protoc}/bin/protoc.exe"/>
+    <property name="path.protoc.lib" value="${path.protoc}/include"/>
+
+    <property name="path.venv" value="${basedir}/venv"/>
+    <property name="path.venv.scripts" value="${path.venv}/Scripts"/>
+    <property name="path.python.bin" value="${path.venv.scripts}/python.exe"/>
+    <property name="path.python.pip" value="${path.venv.scripts}/pip.exe"/>
+
+    <property name="path.nanopb.bin" value="${path.venv.scripts}/nanopb_generator.exe"/>
+
+    <path id="proto.spec.files">
+        <fileset dir="${path.proto.specs}">
+            <include name="*.proto"/>
+        </fileset>
+    </path>
+
+    <property name="path.generated" value="generated"/>
+    <property name="path.generated.client" value="${path.generated}/client"/>
+    <property name="path.generated.server" value="${path.generated}/server"/>
+
+    <!-- endregion Paths -->
+
+    <!-- region Init -->
+
+    <target name="init" description="Prepare the env for the build.">
+        <antcall target="init-virtualenv"/>
+    </target>
+
+    <target name="init-virtualenv"
+            description="Install virtualenv and required packages."
+    >
+        <antcall target="init-install-virtualenv"/>
+        <antcall target="init-install-deps"/>
+    </target>
+
+    <target name="init-install-virtualenv"
+            description="Install virtualenv."
+            depends="init-virtualenv-ready"
+            unless="ready.virtualenv"
+    >
+        <echo>
+            =====================
+
+            Setting up virtualenv
+
+            =====================
+        </echo>
+
+        <exec executable="cmd" dir="." failonerror="true" failifexecutionfails="true">
+            <arg value="/c"/>
+            <arg value="pyenv"/>
+            <arg value="exec"/>
+            <arg value="python"/>
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="virtualenv"/>
+        </exec>
+
+        <exec executable="cmd" dir="." failonerror="true" failifexecutionfails="true">
+            <arg value="/c"/>
+            <arg value="pyenv"/>
+            <arg value="exec"/>
+            <arg value="python"/>
+            <arg value="-m"/>
+            <arg value="virtualenv"/>
+            <arg value="venv"/>
+        </exec>
+    </target>
+
+    <target name="init-virtualenv-ready">
+        <available file="${path.venv}" property="ready.virtualenv"/>
+
+        <echo>Checking if ${path.venv} is present: ${ready.virtualenv}</echo>
+    </target>
+
+    <target name="init-install-deps"
+            description="Install requirements."
+            depends="init-install-virtualenv"
+    >
+        <echo>
+            =======================
+
+            Installing requirements
+
+            =======================
+        </echo>
+
+        <exec executable="${path.python.pip}" dir="." spawn="false" failonerror="true">
+            <arg value="install"/>
+            <arg value="-r"/>
+            <arg value="requirements.in.txt"/>
+        </exec>
+    </target>
+
+    <target name="update-deps-versions"
+            description="Update requirements versions to installed ones."
+            depends="init-install-deps"
+    >
+        <echo>
+            ==============================
+
+            Updating requirements versions
+
+            ==============================
+        </echo>
+
+        <exec executable="${path.python.pip}" dir="." spawn="false" failonerror="true"
+              output="requirements.txt"
+        >
+            <arg value="freeze"/>
+            <arg value="-l"/>
+            <arg value="-r"/>
+            <arg value="requirements.in.txt"/>
+        </exec>
+    </target>
+
+    <!-- endregion Init -->
+
+    <!-- region Build -->
+
+    <target name="build"
+            description="Build Robotrack SmartHome protocol"
+            depends="init"
+    >
+        <antcall target="build-generate"/>
+    </target>
+
+    <target name="build-generate"
+            description="Generate protobuf implementations."
+            depends="clean"
+    >
+        <antcall target="build-generate-client"/>
+        <antcall target="build-generate-server"/>
+    </target>
+
+    <target name="build-generate-client">
+        <echo>
+            ==========================================
+
+            Generating protobuf implementations for C.
+
+            ==========================================
+        </echo>
+        <foreach target="build-generate-client-from-proto-spec" param="proto.spec">
+            <path refid="proto.spec.files"/>
+        </foreach>
+    </target>
+
+    <target name="build-generate-client-from-proto-spec">
+        <echo>Generating protobuf implementation for "${proto.spec}"</echo>
+
+        <exec executable="${path.nanopb.bin}" dir="." spawn="false" failonerror="true">
+            <arg value="--proto-path"/>
+            <arg value="${path.proto.specs}/"/>
+            <arg value="--output-dir"/>
+            <arg value="${path.generated.client}/"/>
+            <arg value="--extension"/>
+            <arg value=".nanopb"/>
+            <arg value="${proto.spec}"/>
+        </exec>
+    </target>
+
+    <target name="build-generate-server">
+        <echo>
+            ===============================================
+
+            Generating protobuf implementations for Python.
+
+            ===============================================
+        </echo>
+
+        <exec executable="${path.protoc.bin}" dir="." spawn="false" failonerror="true">
+            <arg value="--plugin=protoc-gen-python_betterproto=${path.venv}/Scripts/protoc-gen-python_betterproto.exe"/>
+            <arg value="-I"/>
+            <arg value="${path.proto.specs}/"/>
+            <arg value="--python_betterproto_out"/>
+            <arg value="${path.generated.server}/"/>
+            <arg value="${path.proto.specs}/*.proto"/>
+        </exec>
+    </target>
+
+    <!-- endregion Build -->
+
+    <!-- region Clean -->
+
+    <target name="clean"
+            description="Clean generated files"
+    >
+        <echo>
+            ===========================
+
+            Cleaning up generated files
+
+            ===========================
+        </echo>
+
+        <delete>
+            <fileset dir="${path.generated.client}" includes="**/*"/>
+            <fileset dir="${path.generated.server}" includes="**/*"/>
+        </delete>
+    </target>
+
+    <!-- endregion Clean -->
+
+</project>

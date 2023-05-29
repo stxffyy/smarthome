@@ -1,0 +1,7 @@
+asgiref
+channels
+channels-redis
+django
+django-modeltranslation
+django_request_mapping
+fontawesomefree

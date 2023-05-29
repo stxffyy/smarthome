@@ -1,0 +1,478 @@
+<!-- template control/info.html -->
+{% extends 'control/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Manual control' %}{% endblock %}
+
+{% block control-content %}
+    <div class="cards">
+        <div class="card">
+            <button class="card-button" hidden></button>
+            <h2 class="card-title">Display</h2>
+            <div class="card-line"></div>
+            <div class="card-icon">
+                <span class="material-icons">
+                    desktop_windows
+                </span>
+            </div>
+            <ul class="card-list">
+                <li class="card-list-item columns-1">
+                    <div class="column-container">
+                        <div class="display-canvas">
+                            <canvas id="canvas" style="border:3px solid #5469d4; background-color: white; touch-action: none"></canvas>
+                        </div>
+
+                        <div class="display-utils">
+                            <div class="color-set">
+                                <table>
+                                    <tr>
+                                        <td><button style="background-color: black; height: 20px; width: 20px;" onclick="color('black')"></button></td>
+                                        <td><button style="background-color: white; height: 20px; width: 20px;" onclick="color('white')"></button></td>
+                                        <td><button style="background-color: red; height: 20px; width: 20px;" onclick="color('red')"></button></td>
+                                        <td><button style="background-color: green; height: 20px; width: 20px;" onclick="color('green')"></button></td>
+                                        <td><button style="background-color: blue; height: 20px; width: 20px;" onclick="color('blue')"></button></td>
+                                        <td><button style="background-color: brown; height: 20px; width: 20px;" onclick="color('brown')"></button></td>
+                                        <td><button style="background-color: yellow; height: 20px; width: 20px;" onclick="color('yellow')"></button></td>
+                                        <td><button style="background-color: grey; height: 20px; width: 20px;" onclick="color('grey')"></button></td>
+                                        <td>
+                                            <label class="selector-fontSize">
+                                                <select style="height: 20px; width: auto;" onchange="changeFont(this.value)">
+                                                    <option value="16">Arial 16 pt.</option>
+                                                    <option value="24">Arial 24 pt.</option>
+                                                    <option value="32">Arial 32 pt.</option>
+                                                </select>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="draw-modes">
+                                <button id="line" class="input-button_display" onclick="setMode('line')">Line</button>
+                                <button id="rect" class="input-button_display" onclick="setMode('rectangle')">Rectangle</button>
+                                <button id="fillRect" class="input-button_display" onclick="setMode('filledRectangle')">FilledRectangle</button>
+                                <button id="circle" class="input-button_display" onclick="setMode('circle')">Circle</button>
+                                <button id="text" class="input-button_display" onclick="setMode('text')">Text</button>
+                                <button id="clear" class="input-button_display" onclick="clearCanvas()">Clear</button>
+                            </div>
+
+                            <div class="columns-2">
+                                <label class="input-range-block columns-2">
+                                    <input id="brightness" type="range" name="led1" value="50" min="0" max="100" onmousemove="rangeSlider(this.id, this.value)">
+                                    <span id="brightness-range-value" class="range-value">0</span>
+                                    <span class="placeholder">
+                                        Brightness
+                                    </span>
+                                </label>
+                                <label class="input-button-block">
+                                    <input type="button" class="input-button" value="Send" onclick="sendDisplay()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="card">
+            <button class="card-button" hidden></button>
+            <h2 class="card-title">IR RC and MP3</h2>
+            <div class="card-line"></div>
+            <div class="card-icon">
+                <span class="material-icons">
+                    games
+                </span>
+            </div>
+            <ul class="card-list">
+                <li class="card-list-item">
+                    <div class="column-container">
+                        <div class="IRRC-arrows">
+                            <label class="input-arrow-block arrow-1">
+                                <input type="checkbox" class="checkbox spec">
+                                <span class="layer">
+                                    <span class="material-icons">expand_less</span>
+                                </span>
+                            </label>
+                            <label class="input-arrow-block arrow-2">
+                                <input type="checkbox" class="checkbox spec">
+                                <span class="layer">
+                                    <span class="material-icons">chevron_left</span>
+                                </span>
+                            </label>
+                            <label class="input-arrow-block arrow-3">
+                                <input type="checkbox" class="checkbox spec">
+                                <span class="layer">
+                                    <span class="material-icons">chevron_left</span>
+                                </span>
+                            </label>
+                            <label class="input-arrow-block arrow-4">
+                                <input type="checkbox" class="checkbox spec">
+                                <span class="layer">
+                                    <span class="material-icons">expand_more</span>
+                                </span>
+                            </label>
+                        </div>
+                        <div class="IRRC-fbuttons">
+                            <label class="input-fbutton-block">
+                                <input type="checkbox" class="checkbox spec">
+                                <span class="layer">F1</span>
+                            </label>
+                            <label class="input-fbutton-block">
+                                <input type="checkbox" class="checkbox spec" value="F2">
+                                <span class="layer">F2</span>
+                            </label>
+                            <label class="input-fbutton-block">
+                                <input type="checkbox" class="checkbox spec" value="F3">
+                                <span class="layer">F3</span>
+                            </label>
+                            <label class="input-fbutton-block">
+                                <input type="checkbox" class="checkbox spec" value="F4">
+                                <span class="layer">F4</span>
+                            </label>
+                            <label class="input-fbutton-block">
+                                <input type="checkbox" class="checkbox spec" value="F5">
+                                <span class="layer">F5</span>
+                            </label>
+                            <label class="input-fbutton-block">
+                                <input type="checkbox" class="checkbox spec" value="F6">
+                                <span class="layer">F6</span>
+                            </label>
+                        </div>
+                    </div>
+                </li>
+                <li class="card-list-item">
+                    <div class="row-container">
+                        <div class="mp3-circle">
+                            <div class="outer-circle">
+                                <label class="mp3-btn increase-volume">
+                                    <span class="material-icons">
+                                        add
+                                    </span>
+                                </label>
+                                <label class="mp3-btn previous-track">
+                                    <span class="material-icons">
+                                        skip_previous
+                                    </span>
+                                </label>
+                                <label class="inner-circle">
+                                    <span class="material-icons">
+                                        play_arrow
+                                    </span>
+                                </label>
+                                <label class="mp3-btn next-track">
+                                    <span class="material-icons">
+                                        skip_next
+                                    </span>
+                                </label>
+                                <label class="mp3-btn decrease-volume">
+                                    <span class="material-icons">
+                                        remove
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mp3-settings" style="padding-left: 2em; display: flex; flex-direction: column">
+                            <div class="mp3-btn-open" style="justify-content: center; display: flex; flex-direction: column;">
+                                <div>
+                                    <input type="checkbox">
+                                    <label>Open file in folder</label>
+                                </div>
+                                <div style="margin-top: 1em; display: grid; grid-template-columns: 1fr 1fr">
+                                    <label class="input-value-block">
+                                        <input type="text" class="input-value" name="led1" value="23 C">
+                                        <span class="placeholder">File</span>
+                                    </label>
+                                    <label class="input-value-block">
+                                        <input type="text" class="input-value" name="led1" value="23 C">
+                                        <span class="placeholder">Folder</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div style="margin-top: 1em;">
+                                <label class="input-range-block">
+                                    <input id="temperature" type="range" name="led1" value="50" min="0" max="100" onmousemove="rangeSlider(this.id, this.value)">
+                                    <span id="temperature-range-value" class="range-value" >50</span>
+                                    <span class="placeholder">Value</span>
+                                </label>
+                            </div>
+                            <div style="margin-top: 1em; display: grid; grid-template-columns: 1fr 1fr">
+                                <div style="display: flex; flex-direction: row">
+                                    <div class="toggle-button-cover">
+                                        <div class="button-cover">
+                                            <div class="button b2" id="button-17">
+                                                <input type="checkbox" class="checkbox">
+                                                <div class="knobs">
+                                                    <span></span>
+                                                </div>
+                                                <div class="layer"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <label class="input-button-block">
+                                    <input type="button" class="input-button" name="led1" value="Send">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="card">
+            <button class="card-button" hidden></button>
+            <h2 class="card-title">Light sensors</h2>
+            <div class="card-line"></div>
+            <div class="card-icon">
+                <span class="material-icons">
+                    lightbulb
+                </span>
+            </div>
+            <ul class="card-list">
+                <li class="card-list-item ">
+                    <div class="item-name">
+                        IR sensor
+                    </div>
+                    <div class="item-functions columns-1">
+                        <label class="input-value-block">
+                            <input type="text" class="input-value" name="led1" value="23 C">
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                    </div>
+                </li>
+                <li class="card-list-item">
+                    <div class="item-name">
+                        Light sensor
+                    </div>
+                    <div class="item-functions columns-1">
+                        <label class="input-value-block">
+                            <input type="text" class="input-value" name="led1" value="23 C">
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                    </div>
+                </li>
+                <li class="card-list-item">
+                    <div class="item-name">
+                        Light sensor (I2C)
+                    </div>
+                    <div class="item-functions columns-1">
+                        <label class="input-value-block">
+                            <input type="text" class="input-value" name="led1" value="23 C">
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="card">
+            <button class="card-button" hidden></button>
+            <h2 class="card-title">Direct action executors</h2>
+            <div class="card-line"></div>
+            <div class="card-icon">
+                <span class="material-icons">
+                    flashlight_on
+                </span>
+            </div>
+            <ul class="card-list">
+                <li class="card-list-item ">
+                    <div class="item-name">
+                        Piezo emitter
+                    </div>
+                    <div class="item-functions columns-3">
+                        <label class="input-value-block">
+                            <input type="text" class="input-value" name="led1" value="23 C">
+                            <span class="placeholder">
+                                Frequency
+                            </span>
+                        </label>
+                        <label class="input-value-block">
+                            <input type="text" class="input-value" name="led1" value="23 C">
+                            <span class="placeholder">
+                                Duration
+                            </span>
+                        </label>
+                        <label class="input-button-block">
+                            <input type="button" class="input-button" name="led1" value="Send">
+                        </label>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="card">
+            <button class="card-button" hidden></button>
+            <h2 class="card-title">Weather</h2>
+            <div class="card-line"></div>
+            <div class="card-icon">
+                <span class="material-icons">
+                    thermostat
+                </span>
+            </div>
+            <ul class="card-list">
+                <li class="card-list-item ">
+                    <div class="item-name">
+                        Temperature Temperature Temperature Temperature Temperature
+                    </div>
+                    <div class="item-functions columns-3">
+                        <label class="input-value-block">
+                            <input type="text" class="input-value" name="led1" value="23 C">
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                        <label class="input-value-block">
+                            <input type="text" class="input-value" name="led1" value="23 C">
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                        <label class="input-button-block">
+                            <input type="button" class="input-button" name="led1" value="Send">
+                        </label>
+                    </div>
+                </li>
+                <li class="card-list-item">
+                    <div class="item-name">
+                        Temperature-new
+                    </div>
+                    <div class="item-functions columns-1">
+                        <label class="input-range-block">
+                            <input id="temperature" type="range" name="led1" value="50" min="0" max="100" onmousemove="rangeSlider(this.id, this.value)">
+                            <span id="temperature-range-value" class="range-value" >50</span>
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                    </div>
+                </li>
+                <li class="card-list-item">
+                    <div class="item-name">
+                        Humidity Humidity Humidity Humidity Humidity Humidity Humidity Humidity Humidity Humidity Humidity
+                    </div>
+                    <div class="item-functions columns-2">
+                        <label class="input-range-block">
+                            <input id="humidity" type="range" name="led1" value="50" min="0" max="100" onmousemove="rangeSlider(this.id, this.value)">
+                            <span id="humidity-range-value" class="range-value">0</span>
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                        <label class="input-value-block">
+                            <input type="text" class="input-value" name="led1" value="23 C">
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                    </div>
+                </li>
+                <li class="card-list-item">
+                    <div class="item-name">
+                        Pressure1
+                    </div>
+                    <div class="item-functions columns-2">
+                        <label class="input-range-block">
+                            <input id="pressure1" type="range" name="led1" value="50" min="0" max="100" onmousemove="rangeSlider(this.id, this.value)">
+                            <span id="pressure1-range-value" class="range-value">0</span>
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                        <label class="input-value-block">
+                            <input type="text" class="input-value" name="led1" value="23 C">
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                    </div>
+                </li>
+                <li class="card-list-item columns-2">
+                    <div class="item-name">
+                        Pressure2
+                    </div>
+                    <div class="item-functions columns-2">
+                        <label class="input-range-block">
+                            <input id="pressure1" type="range" name="led1" value="50" min="0" max="100" onmousemove="rangeSlider(this.id, this.value)">
+                            <span id="pressure1-range-value" class="range-value">0</span>
+                            <span class="placeholder">
+                                Value
+                            </span>
+                        </label>
+                        <div class="toggle-button-cover">
+                            <div class="button-cover">
+                                <div class="button b2" id="button-17">
+                                    <input type="checkbox" class="checkbox">
+                                    <div class="knobs">
+                                        <span></span>
+                                    </div>
+                                    <div class="layer"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock control-content %}
+
+{% block script %}
+    <script>
+        function get_out_data() {
+            var inputs_string = [];
+            {% if out_data %}
+                {% for label, info in out_data.items %}
+                    var sensor = '{\"type\": ' + '\"{{ info.3 }}\"' + ', \"port\": ' + '\"{{ info.1 }}\"' + ', \"value\": ' +  '\"' + $(".result-{{ info.1 }}").val() + '\"' + '}'
+                    inputs_string.push(sensor);
+                {% endfor %}
+            {% endif %}
+            console.log(inputs_string);
+            $.ajax({
+                method: 'POST',
+                url: "{% url 'save_data' %}",
+                dataType: 'text',
+                data:  '{\"user\": ' + "\"{{ user.username }}\", \"data\": [" +  inputs_string + "]}",
+                success: function () {
+                    console.log("YEEEEEE");
+                },
+                error: function () {
+                    console.log("NOOOOOO");
+                }
+            });
+        }
+
+        var socket = new WebSocket('ws://' + window.location.host + '/ws/get_data/');
+
+        socket.onmessage = function (event) {
+            var div_string = '';
+
+            console.log('receive')
+            var data = JSON.parse(event.data);
+            data = JSON.parse(data.replace(/'/g, '"'));
+            var keys = Object.keys(data);
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var arr = data[key];
+                div_string += '<div class="card">' +
+                        '<div class="card-header">' + arr[2] + '</div>' +
+                        '<div class="card-main">' +
+                            '<i class="material-icons">' + arr[0] + '</i>' +
+                            '<div class="main-description">' + key + '</div>' +
+                        '</div>' +
+                    '</div>';
+            }
+            document.getElementById("input-data").innerHTML = div_string;
+        }
+
+        socket.onopen = function (event) {
+            console.log("Open");
+        }
+
+        socket.onclose = function (event) {
+            console.log("Close");
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+import "executor.proto";
+import "sensor.proto";
+
+service DeviceService {
+    rpc RegisterSensors (RegisterSensorsRequest) returns (RegisterSensorsResponse);
+    rpc RegisterExecutors (RegisterExecutorsRequest) returns (RegisterExecutorsResponse);
+
+    rpc UpdateSensorData (UpdateSensorDataRequest) returns (UpdateSensorDataResponse);
+
+    rpc GetVirtualSensorData (GetVirtualSensorDataRequest) returns (GetVirtualSensorDataResponse);
+    rpc PollExecutorTasks (PollExecutorTasksRequest) returns (PollExecutorTasksResponse);
+
+    rpc RegisterDevices (RegisterDevicesRequest) returns (RegisterDevicesResponce);
+}
+
+message RegisterSensorsRequest {
+    repeated Sensor sensors = 1;
+}
+
+message RegisterSensorsResponse {}
+
+message RegisterExecutorsRequest {
+    repeated Executor executors = 1;
+}
+
+message RegisterExecutorsResponse {}
+
+message UpdateSensorDataRequest {
+    repeated SensorData data = 1;
+}
+
+message UpdateSensorDataResponse {}
+
+message GetVirtualSensorDataRequest {}
+
+message GetVirtualSensorDataResponse {
+    repeated SensorData data = 1;
+}
+
+message PollExecutorTasksRequest {}
+
+message PollExecutorTasksResponse {
+    repeated ExecutorTask tasks = 1;
+}
+
+message RegisterDevicesRequest{
+    repeated Sensor sensors = 1;
+    repeated SensorData SensorData = 2;
+    repeated Executor executors = 3;
+    repeated ExecutorData ExecData = 4;
+}
+
+message RegisterDevicesResponce{
+    repeated SensorData SensData = 1;
+    repeated ExecutorData ExecData = 2;
+}

@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+message Executor {
+    uint32 id = 1;
+    ExecutorType type = 2;
+    string name = 3;
+    ExecutorPort port = 4;
+}
+
+enum ExecutorType {
+    EXECUTOR_TYPE_UNSPECIFIED = 0;
+    EXECUTOR_TYPE_LED = 1;
+    EXECUTOR_TYPE_LED_PWM = 2;
+    EXECUTOR_TYPE_BUZZER = 3;
+    EXECUTOR_TYPE_SERVO = 4;
+    EXECUTOR_TYPE_SERVO_SMALL = 5;
+    EXECUTOR_TYPE_DC_MOTOR = 6;
+}
+
+enum ExecutorPort {
+    EXECUTOR_PORT_UNSPECIFIED = 0;
+    EXECUTOR_PORT_OUT1 = 1;
+    EXECUTOR_PORT_OUT2 = 2;
+    EXECUTOR_PORT_OUT3 = 3;
+    EXECUTOR_PORT_OUT4 = 4;
+    EXECUTOR_PORT_OUT5 = 5;
+    EXECUTOR_PORT_OUT6 = 6;
+    EXECUTOR_PORT_OUT7 = 7;
+    EXECUTOR_PORT_OUT8 = 8;
+    EXECUTOR_PORT_M1 = 9;
+    EXECUTOR_PORT_M2 = 10;
+    EXECUTOR_PORT_M3 = 11;
+    EXECUTOR_PORT_M4 = 12;
+}
+
+message ExecutorTask {
+    uint32 id = 1;
+    ExecutorCommand command = 2;
+}
+
+message ExecutorCommand {
+    ExecutorCommandType type = 1;
+    repeated uint32 args = 2;
+}
+
+enum ExecutorCommandType {
+    EXECUTOR_COMMAND_TYPE_UNSPECIFIED = 0;
+    EXECUTOR_COMMAND_TYPE_ON = 1;
+    EXECUTOR_COMMAND_TYPE_OFF = 2;
+    EXECUTOR_COMMAND_TYPE_SET_VALUE = 3;
+}
+
+message ExecutorData {
+    uint32 id = 1;
+    uint32 ExecutorValue = 2;
+}

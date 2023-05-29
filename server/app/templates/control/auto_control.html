@@ -1,0 +1,359 @@
+<!-- template control/info.html -->
+{% extends 'control/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Auto control' %}{% endblock %}
+
+{% block control-content %}
+    <div class="cards" id="cards">
+    </div>
+{% endblock control-content %}
+
+{% block script %}
+    <script type="text/javascript">
+        const sensors_and_executors = {'light_sensors': {'type': 'sensors', 'devices': [0, 1, 2, 3, 4, 5, 40]},
+                'direct_interaction_sensors': {'type': 'sensors', 'devices': [9, 8, 50, 51, 52, 53]},
+                'physical_sensors': {'type': 'sensors', 'devices': [17, 18, 20, 31, 32, 33, 34, 35, 36, 37, 38, 39]},
+                'special_sensors': {'type': 'sensors', 'devices': [67, 23, 16, 19]},
+                'color_sensors': {'type': 'sensors', 'devices': [42, 43, 44, 45, 46, 47, 48, 49, 21]},
+                'time_sensors': {'type': 'sensors', 'devices': [61, 62, 63, 64, 65, 66]},
+                'environmental_sensors': {'type': 'sensors', 'devices': [68, 54, 55, 56, 57]},
+                'motor_executors': {'type': 'executors', 'devices': [24, 25, 28, 29, 30]},
+                'direct_impact_executors': {'type': 'executors', 'devices': [6, 7, 10, 11, 12, 13, 14,
+                        15, 26, 27, 58, 59, 60, 41]} }
+
+        function get_cards(e, is_init) {
+            let r = {};
+            for (let i = 0; i < e.length; i++) {
+                const el = e[i];
+
+                let d_type = el['type']
+                let d_cardName;
+                let d_cardName_type;
+                for (const name of Object.keys(sensors_and_executors)) {
+                    if (sensors_and_executors[name]['devices'].indexOf(parseInt(el['type'])) !== -1) {
+                        d_cardName = name;
+                        d_cardName_type = sensors_and_executors[name]['type'];
+                    }
+                }
+                let d_port = el['port'];
+                let d_value = '';
+                if (!is_init) {
+                    if (d_cardName_type === 'sensors') {
+                        d_value = el['value'];
+                    } else {
+                        d_value = el['value'];
+                        if (parseInt(d_type) === 26) {
+                            display_data = d_value;
+                        }
+                    }
+                }
+                let device = {};
+                device.type = d_type;
+                device.port = d_port;
+                device.values = d_value;
+                if (Object.keys(r).indexOf(d_cardName) === -1) {
+                    r[d_cardName] = {};
+                    r[d_cardName].card_type = d_cardName_type;
+                    r[d_cardName].devices = [];
+                }
+                r[d_cardName].devices.push(device);
+            }
+
+            return r;
+        }
+
+        function draw_cards(cards) {
+            const cards_name = {'light_sensors': 'Датчики света',
+                'direct_interaction_sensors': 'Датчики прямого взаимодействия', 'physical_sensors': 'Физические сенсоры',
+                'special_sensors': 'Special sensors', 'color_sensors': 'Color sensors', 'time_sensors': 'Time sensors',
+                'environmental_sensors': 'Датчики среды', 'motor_executors': 'Motor executors',
+                'direct_impact_executors': 'Direct impact executors'};
+            const devices_name = ['ИК-датчик Показания', 'ИК Белый (Близко)', 'ИК Чёрный (Далеко)', 'Освещённость показания', 'Освещённость Светло', 'Освещённость Темно',
+                'Светодиод', 'Светодиод с яркостью','Датчик ПДУ', 'Кнопка', 'Зуммер', 'Зуммер [Время]', 'Зуммер выкл.', '' , '' , '' , 'Микрофон (аналоговый)',
+                 'Датчик наклона', '', 'Пламя', 'Магнитное поле', 'Датчик Цвета', '', 'Distance I2C', 'Серводвигатель', 'Малый Серводвигатель', 'Дисплей',
+                'MP3', 'Мотор', 'Остановить мотор', 'Блокировать мотор', 'Orientation_x_gyro', 'Orientation_x_accel',
+                'Orientation_x_filtered', 'Orientation_y_gyro', 'Orientation_y_accel', 'Orientation_y_filtered',
+                'Orientation_z_gyro', 'Orientation_z_accel', 'Orientation_z_filtered', 'Light I2C', 'Встроенный RGB LED',
+                'Red I2C', 'Green I2C', 'Blue I2C', 'General I2C', 'Hue I2C', 'Saturation I2C', 'Brightness I2C',
+                'Color I2C', 'Touch percentage', 'Touch mm', 'Touch newtons', 'Angle', 'Температура', 'Влажность',
+                'Pressure kPa', 'Pressure mm', 'Set time', 'Set date', 'Set LED time', 'Day', 'Month', 'Year',
+                'Hour', 'Minute', 'Second', 'Distance', 'Soil moisture'];
+            const ports_name = {'62': 'IN1', '63': 'IN2', '64': 'IN3', '65': 'IN4', '66': 'IN5', '67': 'IN6', '68': 'IN7',
+                '69': 'IN8', '38': 'OUT1', '25': 'OUT2', '24': 'OUT3', '26': 'OUT4', '22': 'OUT5', '37': 'OUT6',
+                '29': 'OUT7', '28': 'OUT8', '1': 'UART1', '2': 'UART2', '3': 'M1', '4': 'M2', '5': 'M3', '6': 'M4',
+                '0': ''}; 
+            const executors_inputs = {'6': ['State'], '7': ['PWM'], '10': ['Frequency'], '11': ['Frequency', 'Time'],
+                '12': [], '24': ['Angle'], '25': ['Angle'], '26': ['Special'], '27': ['Special'], '28': ['Speed'],
+                '29': [], '30': [], '41': ['State'], '58': ['Hour', 'Minute', 'Second'], '59': ['Year', 'Month', 'Day'],
+                '60': ['State']};
+            let html_cards = '';
+            let html_card; let html_card_custom;
+            let flag_ex = false;
+            for (const name of Object.keys(cards)) {
+                if (cards[name].card_type === 'sensors') {
+                    html_card = '<div id="' + cards_name[name] + '" class="card">' +
+                                    '<button class="card-button" hidden></button>' +
+                                    '<h2 class="card-title">' + cards_name[name] + '</h2>' +
+                                    '<div class="card-line"></div>' +
+                                    '<div class="card-icon"><span class="material-icons">' + 'lightbulb' + '</span></div>' +
+                                    '<ul class="card-list">';
+                    for (const sensor of cards[name]['devices']) {
+                        let sensor_value = sensor['values'] === undefined ? '' : sensor['values'];
+                        html_card += '<li class="card-list-item "><div class="item-name">' + devices_name[parseInt(sensor['type'])] +
+                            ' [' + ports_name[sensor['port']] + ']</div><div class="item-functions columns-1">' +
+                            '<label class="input-value-block">' + '' +
+                            '<input type="text" disabled class="input-value" name="' + sensor['type'] + sensor['port'] +
+                            '" value="' + sensor_value + '"><span class="placeholder">' + 'Value' +
+                            '</span></label></div></li>';
+                    }
+                    html_cards += html_card + '</ul></div>\n';
+                } else {
+                    html_card = '<div id="' + cards_name[name] + '" class="card">' +
+                                    '<button class="card-button" hidden></button>' +
+                                    '<h2 class="card-title">' + cards_name[name] + '</h2>' +
+                                    '<div class="card-line"></div>' +
+                                    '<div class="card-icon"><span class="material-icons">' + 'lightbulb' + '</span></div>' +
+                                    '<ul class="card-list">';
+                    for (const executor of cards[name]['devices']) {
+                        if (devices_name[parseInt(executor['type'])] === 'MP3') {
+                            html_card_custom = '<div id="MP3" class="card">' +
+                                '<button class="card-button" hidden></button>' +
+                                '<h2 class="card-title">' + 'MP3' + '</h2>' +
+                                '<div class="card-line"></div>' +
+                                '<div class="card-icon"><span class="material-icons">' + 'library_music' + '</span></div>' +
+                                '<ul class="card-list"><li class="card-list-item">';
+                            html_card_custom += `<div class="row-container">
+                        <div class="mp3-circle">
+                            <div class="outer-circle">
+                                <label class="mp3-btn increase-volume">
+                                    <span class="material-icons">
+                                        add
+                                    </span>
+                                </label>
+                                <label class="mp3-btn previous-track">
+                                    <span class="material-icons">
+                                        skip_previous
+                                    </span>
+                                </label>
+                                <label class="inner-circle">
+                                    <span class="material-icons">
+                                        play_arrow
+                                    </span>
+                                </label>
+                                <label class="mp3-btn next-track">
+                                    <span class="material-icons">
+                                        skip_next
+                                    </span>
+                                </label>
+                                <label class="mp3-btn decrease-volume">
+                                    <span class="material-icons">
+                                        remove
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mp3-settings" style="padding-left: 2em; display: flex; flex-direction: column">
+                            <div class="mp3-btn-open" style="justify-content: center; display: flex; flex-direction: column;">
+                                <div>
+                                    <input type="checkbox">
+                                    <label>Open file in folder</label>
+                                </div>
+                                <div style="margin-top: 1em; display: grid; grid-template-columns: 1fr 1fr">
+                                    <label class="input-value-block">
+                                        <input type="text" class="input-value" name="led1" value="23 C">
+                                        <span class="placeholder">File</span>
+                                    </label>
+                                    <label class="input-value-block">
+                                        <input type="text" class="input-value" name="led1" value="23 C">
+                                        <span class="placeholder">Folder</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div style="margin-top: 1em;">
+                                <label class="input-range-block">
+                                    <input id="temperature" type="range" name="led1" value="50" min="0" max="100" onmousemove="rangeSlider(this.id, this.value)">
+                                    <span id="temperature-range-value" class="range-value" >50</span>
+                                    <span class="placeholder">Value</span>
+                                </label>
+                            </div>
+                            <div style="margin-top: 1em; display: grid; grid-template-columns: 1fr 1fr">
+                                <div style="display: flex; flex-direction: row">
+                                    <div class="toggle-button-cover">
+                                        <div class="button-cover">
+                                            <div class="button b2" id="button-17">
+                                                <input type="checkbox" class="checkbox">
+                                                <div class="knobs">
+                                                    <span></span>
+                                                </div>
+                                                <div class="layer"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <label class="input-button-block">
+                                    <input type="button" class="input-button" name="led1" value="Send">
+                                </label>
+                            </div>
+                        </div>
+                                </div>`;
+                            html_card_custom += '</li></ul></div>\n';
+                            html_cards += html_card_custom;
+                        } else if (devices_name[parseInt(executor['type'])] === 'Display') {
+                            html_card_custom = '<div id="Display" class="card">' +
+                                '<button class="card-button" hidden></button>' +
+                                '<h2 class="card-title">' + 'Display' + '</h2>' +
+                                '<div class="card-line"></div>' +
+                                '<div class="card-icon"><span class="material-icons">' + 'display_settings' + '</span></div>' +
+                                '<ul class="card-list">';
+                            html_card_custom += `<li class="card-list-item columns-1">
+                    <div class="column-container">
+                        <div class="display-canvas">
+                            <canvas id="canvas" style="border:3px solid #5469d4; background-color: black; touch-action: none"></canvas>
+                        </div>
+
+                        <div class="display-utils">
+                            <div class="color-set">
+                                <table>
+                                    <tr>
+                                        <td><button id="d_c_black" style="background-color: black; height: 20px; width: 20px; border-color: rgb(84, 105, 212);" onclick="setColor(this.id, 'black')"></button></td>
+                                        <td><button id="d_c_white" style="background-color: white; height: 20px; width: 20px; border-color: rgb(84, 105, 212);" onclick="setColor(this.id, 'white')"></button></td>
+                                        <td><button id="d_c_red" style="background-color: red; height: 20px; width: 20px; border-color: rgb(84, 105, 212);" onclick="setColor(this.id, 'red')"></button></td>
+                                        <td><button id="d_c_green" style="background-color: green; height: 20px; width: 20px; border-color: rgb(84, 105, 212);" onclick="setColor(this.id, 'green')"></button></td>
+                                        <td><button id="d_c_blue" style="background-color: blue; height: 20px; width: 20px; border-color: rgb(84, 105, 212);" onclick="setColor(this.id, 'blue')"></button></td>
+                                        <td><button id="d_c_brown" style="background-color: brown; height: 20px; width: 20px; border-color: rgb(84, 105, 212);" onclick="setColor(this.id, 'brown')"></button></td>
+                                        <td><button id="d_c_yellow" style="background-color: yellow; height: 20px; width: 20px; border-color: rgb(84, 105, 212);" onclick="setColor(this.id, 'yellow')"></button></td>
+                                        <td><button id="d_c_grey" style="background-color: grey; height: 20px; width: 20px; border-color: rgb(84, 105, 212);" onclick="setColor(this.id, 'grey')"></button></td>
+                                        <td>
+                                            <label class="selector-fontSize">
+                                                <select style="height: 20px; width: auto;" onchange="changeFont(this.value)">
+                                                    <option value="16">Arial 16 pt.</option>
+                                                    <option value="24">Arial 24 pt.</option>
+                                                    <option value="32">Arial 32 pt.</option>
+                                                </select>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="draw-modes">
+                                <button id="d_m_line" class="input-button_display" onclick="setMode(this.id, 'line')">Line</input>
+                                <button id="d_m_rect" class="input-button_display" onclick="setMode(this.id, 'rectangle')">Rectangle</button>
+                                <button id="d_m_fillRect" class="input-button_display" onclick="setMode(this.id, 'filledRectangle')">FilledRectangle</button>
+                                <button id="d_m_circle" class="input-button_display" onclick="setMode(this.id, 'circle')">Circle</button>
+                                <button id="d_m_text" class="input-button_display" onclick="setMode(this.id, 'text')">Text</button>
+                                <button id="d_m_clear" class="input-button_display" onclick="clearCanvas()">Clear</button>
+                            </div>
+
+                            <div class="columns-2">
+                                <label class="input-range-block columns-2">
+                                    <input id="brightness" type="range" name="led1" value="100" min="0" max="100" onmousemove="rangeSlider(this.id, this.value)">
+                                    <span id="brightness-range-value" class="range-value">100</span>
+                                    <span class="placeholder">
+                                        Brightness
+                                    </span>
+                                </label>
+                                <label class="input-button-block">
+                                    <input id="button_send_` + executor['type'] + '_' + executor['port'] + `" type="button" class="input-button" value="Send" onclick="sendDisplay()">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                                </li>`;
+                            html_card_custom += '</li></ul></div>\n';
+                            html_cards += html_card_custom;
+                        } else {
+                            if (name === 'direct_impact_executors') {
+                                flag_ex = true;
+                            }
+                            let len = executors_inputs[executor['type']].length;
+                            html_card += '<li class="card-list-item "><div class="item-name">' +
+                                devices_name[parseInt(executor['type'])] + ' ' + ports_name[executor['port']] + '</div>';
+                            if (len === 0) {
+                                html_card += '<div class="item-functions columns-1">' + '<label class="input-button-block">' +
+                                    '<input id="button_stop_' + executor['type'] + '_' + executor['port'] +
+                                    '" type="button" class="input-button" name="OFF_or_STOP" value="Stop">' +
+                                    '</label></div></li>';
+                            } else if (len === 1 && executors_inputs[executor['type']][0] === 'State') {
+                                let is_check = executor['values'][0]['values'][0] === '0' ? 'checked' : '';
+                                html_card += '<div class="item-functions columns-2">' + '<div class="toggle-button-cover">' +
+                                    '<div class="button-cover"><div class="button b2 button-17"><input id="checkbox_' +
+                                    executor['type'] + '_' + executor['port'] + '"' + is_check +
+                                    ' type="checkbox" class="checkbox"><div class="knobs"><span></span></div>' +
+                                    '<div class="layer"></div></div></div></div>';
+                                html_card += '<label class="input-button-block">' +
+                                    '<input id="button_send_' + executor['type'] + '_' + executor['port'] +
+                                    '" type="button" class="input-button" name="send" value="Send">' +
+                                    '</label></div></li>'
+                            } else if (len > 0) {
+                                html_card += '<div class="item-functions columns-' + (len + 1) + '">';
+                                let ind = 0, val;
+                                for (const input of executors_inputs[executor['type']]) {
+                                    val = executor['values'];
+                                    html_card += '<label class="input-value-block">' + '' +
+                                        '<input id="value_' + executor['type'] + '_' + executor['port'] +
+                                        '" type="text" class="input-value" name=value_"' + input + '_' +
+                                        executor['type'] + '_' + executor['port'] + '" value="' + val +
+                                        '"><span class="placeholder">' + input + '</span></label>';
+                                    ind += 1;
+                                }
+                                html_card += '<label class="input-button-block">' +
+                                    '<input id="button_send_' + executor['type'] + '_' + executor['port'] +
+                                    '" type="button" class="input-button" name="send" value="Send">' +
+                                    '</label></div></li>'
+                            }
+                        }
+                    }
+                    if (name === 'direct_impact_executors' && flag_ex === true || name !== 'direct_impact_executors') {
+                        html_cards += html_card + '</ul></div>\n';
+                    }
+                }
+            }
+            return html_cards;
+        }
+
+        const inits = {{ inits | safe }};
+        const sensors = {{ sensors | safe }};
+        const executors = {{ executors | safe }};
+        let display_data;
+        let r = [];
+        let r_device;
+        let d_d;
+
+        for (let device of inits) {
+            r_device = {'type': device.type, 'port': device.port, 'value': []};
+            for (const name of Object.keys(sensors_and_executors)) {
+                if (sensors_and_executors[name]['devices'].indexOf(parseInt(device['type'])) !== -1) {
+                    d_d = sensors_and_executors[name]['type'];
+                    break;
+                }
+            }
+            if (d_d === 'sensors') {
+                r_device.value[0] = {'arg': device.type, 'values': []};
+                r_device.value[0]['values'] = [];
+
+                for (let sensor of sensors) {
+                    if (device.type === sensor.type && device.port === sensor.port) {
+                        r_device.value = sensor.value;
+                        break;
+                    }
+                }
+            } else {
+                for (let executor of executors) {
+                    if (device.type === executor.type && device.port === executor.port) {
+                        r_device.value = executor.value;
+                        break;
+                    }
+                }
+            }
+            r.push(r_device);
+        }
+        let url_store_executors = "/device/store_executors";
+
+        // console.log(get_cards(r, is_init=false));
+        document.getElementById("cards").innerHTML += draw_cards(get_cards(r, is_init=false));
+    </script>
+    <script type="text/javascript" src="{% static 'sensor_control/js/control.js' %}"></script>
+{% endblock %}

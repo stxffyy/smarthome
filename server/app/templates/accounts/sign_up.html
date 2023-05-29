@@ -1,0 +1,91 @@
+<!-- template account/register.html -->
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans 'Sign up' %}{% endblock %}
+
+{% block sign-content %}
+
+    <div class="block img-block sign-up-img-block">
+        <img src="{% static 'accounts/img/Sign-Up_Image.svg' %}" alt="Sign_up_image">
+    </div>
+
+    <div class="block form-block sign-up-form-block centered-items">
+
+        <form method="post" class="sign-form">
+
+            {% csrf_token %}
+
+            <h2 class="title sign-title">{% trans 'Sign up for smart home' %}</h2>
+
+            <div class="input-field">
+                <label for="{{ form.username.id_for_label }}" hidden>{% trans 'Username' %}</label>
+                <i class="fas fa-user"></i>
+                <input 
+                type="text" 
+                name="{{ form.username.html_name }}" 
+                required
+                id="{{ form.username.id_for_label }}" 
+                placeholder="{% trans 'Username' %}">
+            </div>
+
+            <div class="input-field">
+                <label for="{{ form.first_name.id_for_label }}" hidden>{% trans 'First name' %}</label>
+                <i class="fas fa-user-tag"></i>
+                <input 
+                type="text" 
+                name="{{ form.first_name.html_name }}" 
+                required
+                id="{{ form.first_name.id_for_label }}" 
+                placeholder="{% trans 'First name' %}">
+            </div>
+
+            <div class="input-field">
+                <label for="{{ form.last_name.id_for_label }}" hidden>{% trans 'Last name' %}</label>
+                <i class="fas fa-user-lock"></i>
+                <input 
+                type="text" 
+                name="{{ form.last_name.html_name }}" 
+                required
+                id="{{ form.last_name.id_for_label }}" 
+                placeholder="{% trans 'Last name' %}">
+            </div>
+
+            <div class="input-field">
+                <label for="{{ form.password1.id_for_label }}" hidden>{% trans 'Password' %}</label>
+                <i class="fas fa-unlock"></i>
+                <input 
+                type="password" name="{{ form.password1.html_name }}" 
+                required
+                id="{{ form.password1.id_for_label }}" 
+                placeholder="{% trans 'Password' %}"/>
+            </div>
+
+            <div class="input-field">
+                <label for="{{ form.password2.id_for_label }}" hidden>{% trans 'Confirm' %}</label>
+                <i class="fas fa-unlock-keyhole"></i>
+                <input 
+                type="password" 
+                name="{{ form.password2.html_name }}" 
+                required
+                id="{{ form.password2.id_for_label }}"
+                placeholder="{% trans 'Confirm' %}"/>
+            </div>
+
+                <p>{{ form.errors }}</p>
+                <p>{{ form.non_field_errors }}</p>
+{#                {% for error in form.password2.errors %}#}
+{#                    <p>{{ error }}</p>#}
+{#                {% endfor %}#}
+
+            <input type="submit" value="{% trans 'Sign up' %}"/>
+
+            <div class="addition">
+                <span>{% trans 'Already have an account?' %} 
+                    <a href="{% url 'sign_in' %}">{% trans 'Sign in' %}</a>
+                </span>
+            </div>
+        </form>
+    </div>
+{% endblock %}
